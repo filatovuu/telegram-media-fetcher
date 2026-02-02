@@ -1,0 +1,36 @@
+# Builds the official Telegram Bot API server (tdlib/telegram-bot-api)
+# Note: first build can take time.
+
+FROM ubuntu:22.04 AS build
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git ca-certificates \
+    g++ make cmake ninja-build pkg-config \
+    gperf \
+    zlib1g-dev libssl-dev libreadline-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /src
+RUN git clone --depth 1 --recurse-submodules --shallow-submodules https://github.com/tdlib/telegram-bot-api.git
+
+WORKDIR /src/telegram-bot-api
+RUN mkdir -p build && cd build \
+    && cmake -G Ninja -DCMAKE_BUILD_TYPE=Release .. \
+    && ninja -j 1 telegram-bot-api
+
+
+FROM ubuntu:22.04
+
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=build /src/telegram-bot-api/build/telegram-bot-api /usr/local/bin/telegram-bot-api
+
+EXPOSE 8081
+
+# Runtime args are provided via docker-compose command.
+ENTRYPOINT ["/usr/local/bin/telegram-bot-api"]

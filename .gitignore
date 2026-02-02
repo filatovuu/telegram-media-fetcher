@@ -1,0 +1,21 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+downloads/
+.DS_Store
+
+# Bot API server runtime data
+botapi_data/
+botapi/data/
+*.binlog
+
+# Local tooling
+.mypy_cache/
+.pytest_cache/
+coverage.xml
+.coverage
+

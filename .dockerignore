@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+**/__pycache__/
+downloads/
+.git/
+.DS_Store
+botapi/data/
+botapi_data/
+
+# Never bake secrets into images
+.env
+.env.*
+
